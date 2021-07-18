@@ -1,0 +1,197 @@
+<html>
+
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<title>Generate Hearthstone Rundown Json</title>
+</head>
+
+<body>
+	<header class="h-25"><h3>Generate Hearthstone Rundown Json</h3></header>
+	<div id="app" class="h-75">
+		<div class="row h-75">
+			<div class="col">
+				<textarea class="form-control h-75" v-model="inputVal"></textarea>
+			</div>
+			<div class="col">
+				<textarea class="form-control h-75" v-model="outputVal"></textarea>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				inputVal: '[{"type": "click", "x": 123, "y": 321}, {"type": "drag", "xFrom": 123, "yFrom": 321, "xTo": 123, "yTo": 321}, {"type": "MF2MTX", "xFrom": 123, "yFrom": 321, "fromInterval": 2, "fromDistance": 5, "xTo": 123, "yTo": 321, "toInterval": 2, "toDistance": 10}]',
+				outputVal: "",
+				timestamp: 1000,
+				jsonRundown: []
+			},
+			methods: {
+				toClick: function (x, y) {
+					this.jsonRundown.push({
+						"Delta": 0,
+						"EventType": "MouseDown",
+						"Timestamp": this.timestamp,
+						"X": x,
+						"Y": y,
+					});
+
+					this.timestamp += 30;
+
+					this.jsonRundown.push({
+						"Delta": 0,
+						"EventType": "MouseUp",
+						"Timestamp": this.timestamp,
+						"X": x,
+						"Y": y,
+					});
+
+					this.timestamp += 100;
+				},
+				toDrag: function (xFrom, yFrom, xTo, yTo) {
+					this.jsonRundown.push({
+						"Delta": 0,
+						"EventType": "MouseDown",
+						"Timestamp": this.timestamp,
+						"X": xFrom,
+						"Y": yFrom,
+					});
+					this.timestamp += 150;
+
+					this.jsonRundown.push({
+						"Delta": 0,
+						"EventType": "MouseMove",
+						"Timestamp": this.timestamp,
+						"X": xTo,
+						"Y": yTo,
+					});
+					this.timestamp += 200;
+
+					this.jsonRundown.push({
+						"Delta": 0,
+						"EventType": "MouseUp",
+						"Timestamp": this.timestamp,
+						"X": xTo,
+						"Y": yTo,
+					});
+					this.timestamp += 350;
+				},
+				multipleDragToMultipleTargetByX: function (e) {
+					// TODO: control full direction
+					// now: start from center position
+					// now: target from center position
+					// now: Extend by X only
+					// evenType: MF2MTX
+
+					let fromCenterX = e.xFrom;
+					let fromCenterY = e.yFrom;
+					let fromInterval = e.fromInterval;
+					let fromDistance = e.fromDistance;
+
+					let targetCenterX = e.xTo;
+					let targetCenterY = e.yTo;
+					let targetInterval = e.toInterval;
+					let targeDistance = e.toDistance;
+
+					let countInterval = 0;
+					do {
+						if (0 == countInterval) {
+							this.recursiveDragTargetX(fromCenterX, fromCenterY, targetCenterX, targetCenterY, targetInterval, targeDistance);
+						} else {
+							let d = countInterval * fromDistance;
+
+							this.recursiveDragTargetX(fromCenterX + d, fromCenterY, targetCenterX, targetCenterY, targetInterval, targeDistance);
+							this.recursiveDragTargetX(fromCenterX - d, fromCenterY, targetCenterX, targetCenterY, targetInterval, targeDistance);
+						}
+
+						countInterval += 1;
+					} while (countInterval < fromInterval);
+				},
+				recursiveDragTargetX(xFrom, yFrom, xTo, yTo, interval, distance, direction) {
+					let countInterval = 0;
+					do {
+						if (0 == countInterval) {
+							this.toDrag(xFrom, yFrom, xTo, yTo);
+						} else {
+							let d = countInterval * distance;
+
+							this.toDrag(xFrom, yFrom, xTo + d, yTo);
+							this.toDrag(xFrom, yFrom, xTo - d, yTo);
+						}
+
+						countInterval += 1;
+					} while (countInterval < interval);
+				},
+				recursiveDragTargetY(xFrom, yFrom, xTo, yTo, interval, distance, direction) {
+					// TODO: control direction
+				}
+			},
+			watch: {
+				inputVal: function (newVal, oldVal) {
+					try {
+						var array = JSON.parse(newVal);
+
+						for (var i = 0; i < array.length; i++) {
+							let e = array[i];
+
+							switch (e.type) {
+								case 'click':
+									/*
+									{
+										"type": "click",
+										"x": 123,
+										"y": 321
+									}
+									*/
+									this.toClick(e.x, e.y);
+									break;
+								case 'drag':
+									/*
+									{
+										"type": "drag",
+										"xFrom": 123,
+										"yFrom": 321,
+										"xTo": 123,
+										"yTo": 321
+									}
+									*/
+									this.toDrag(e.xFrom, e.yFrom, e.xTo, e.yTo);
+									break;
+								case 'MF2MTX':
+									/*
+									{
+										"type": "MF2MTX",
+										"xFrom": 123,
+										"yFrom": 321,
+										"fromInterval": 2,
+										"fromDistance": 5,
+										"xTo": 123,
+										"yTo": 321,
+										"toInterval": 2,
+										"toDistance": 10
+									}
+									*/
+									this.multipleDragToMultipleTargetByX(e);
+									break;
+								default:
+									;// do not thing
+							}
+						}
+
+						this.outputVal = JSON.stringify(this.jsonRundown);
+					} catch (e) {
+						this.outputVal = e;
+					}
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>
