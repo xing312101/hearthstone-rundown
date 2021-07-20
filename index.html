@@ -11,14 +11,21 @@
 </head>
 
 <body>
-	<header class="h-25"><h3>Generate Hearthstone Rundown Json</h3></header>
-	<div id="app" class="h-75">
-		<div class="row h-75">
-			<div class="col">
-				<textarea class="form-control h-75" v-model="inputVal"></textarea>
-			</div>
-			<div class="col">
-				<textarea class="form-control h-75" v-model="outputVal"></textarea>
+	<div class="container">
+		<div class="h-25">
+			<h3 class="h-25">Generate Hearthstone Rundown Json</h3>
+			<div class="h-25">click: [{"type": "click", "x": 123, "y": 321}]</div>
+			<div class="h-25">drag: [{"type": "drag", "xFrom": 123, "yFrom": 321, "xTo": 123, "yTo": 321}]</div>
+			<div class="h-25">multiple drag: [{"type": "MF2MTX", "xFrom": 123, "yFrom": 321, "fromInterval": 2, "fromDistance": 5, "xTo": 123, "yTo": 321, "toInterval": 2, "toDistance": 10}]</div>
+		</div>
+		<div id="app" class="h-75">
+			<div class="row h-100" style="padding: 10px;">
+				<div class="col">
+					<textarea class="form-control h-100" v-model="inputVal"></textarea>
+				</div>
+				<div class="col">
+					<textarea class="form-control h-100" v-model="outputVal"></textarea>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -27,7 +34,7 @@
 		var app = new Vue({
 			el: '#app',
 			data: {
-				inputVal: '[{"type": "click", "x": 123, "y": 321}, {"type": "drag", "xFrom": 123, "yFrom": 321, "xTo": 123, "yTo": 321}, {"type": "MF2MTX", "xFrom": 123, "yFrom": 321, "fromInterval": 2, "fromDistance": 5, "xTo": 123, "yTo": 321, "toInterval": 2, "toDistance": 10}]',
+				inputVal: '',
 				outputVal: "",
 				timestamp: 1000,
 				jsonRundown: []
