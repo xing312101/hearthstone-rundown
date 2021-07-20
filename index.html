@@ -12,13 +12,15 @@
 
 <body>
 	<div class="container">
-		<div class="h-25">
-			<h3 class="h-25">Generate Hearthstone Rundown Json</h3>
-			<div class="h-25">click: [{"type": "click", "x": 123, "y": 321}]</div>
-			<div class="h-25">drag: [{"type": "drag", "xFrom": 123, "yFrom": 321, "xTo": 123, "yTo": 321}]</div>
-			<div class="h-25">multiple drag: [{"type": "MF2MTX", "xFrom": 123, "yFrom": 321, "fromInterval": 2, "fromDistance": 5, "xTo": 123, "yTo": 321, "toInterval": 2, "toDistance": 10}]</div>
+		<div>
+			<h3 class="">Generate Hearthstone Rundown Json</h3>
+			<div class="">click: [{"type": "click", "x": 123, "y": 321}]</div>
+			<div class="">drag: [{"type": "drag", "xFrom": 123, "yFrom": 321, "xTo": 123, "yTo": 321}]</div>
+			<div class="">multiple drag: [{"type": "MF2MTX", "xFrom": 123, "yFrom": 321, "fromInterval": 2, "fromDistance": 5, "xTo": 123, "yTo": 321, "toInterval": 2, "toDistance": 10}]</div>
 		</div>
 		<div id="app" class="h-75">
+			<div>
+				<button v-on:click="exportResult()">Export Result</button></div>
 			<div class="row h-100" style="padding: 10px;">
 				<div class="col">
 					<textarea class="form-control h-100" v-model="inputVal"></textarea>
@@ -69,7 +71,7 @@
 						"X": xFrom,
 						"Y": yFrom,
 					});
-					this.timestamp += 150;
+					this.timestamp += 100;
 
 					this.jsonRundown.push({
 						"Delta": 0,
@@ -78,7 +80,7 @@
 						"X": xTo,
 						"Y": yTo,
 					});
-					this.timestamp += 200;
+					this.timestamp += 250;
 
 					this.jsonRundown.push({
 						"Delta": 0,
@@ -87,7 +89,7 @@
 						"X": xTo,
 						"Y": yTo,
 					});
-					this.timestamp += 350;
+					this.timestamp += 300;
 				},
 				multipleDragToMultipleTargetByX: function (e) {
 					// TODO: control full direction
@@ -137,6 +139,17 @@
 				},
 				recursiveDragTargetY(xFrom, yFrom, xTo, yTo, interval, distance, direction) {
 					// TODO: control direction
+				},
+				exportResult() {
+					// console.log("exportResult");
+					let content = "data:application/octet-stream," + this.outputVal;
+					var encodedUri = encodeURI(content);
+					var link = document.createElement("a");
+					link.setAttribute("href", encodedUri);
+					link.setAttribute("download", "rundown.json");
+					document.body.appendChild(link); // Required for FF
+
+					link.click();
 				}
 			},
 			watch: {
@@ -193,7 +206,22 @@
 							}
 						}
 
-						this.outputVal = JSON.stringify(this.jsonRundown);
+						let fullJson = {
+							"Acceleration": 1,
+							"CreationTime": "20210711T174930",
+							"DoNotShowWindowOnFinish": false,
+							"Events": this.jsonRundown,
+							"LoopDuration": 0,
+							"LoopInterval": 0,
+							"LoopIterations": 1,
+							"LoopType": "UntilStopped",
+							"MacroSchemaVersion": 2,
+							"RestartPlayer": false,
+							"RestartPlayerAfterMinutes": 60
+						}
+
+
+						this.outputVal = JSON.stringify(fullJson);
 					} catch (e) {
 						this.outputVal = e;
 					}
@@ -202,5 +230,4 @@
 		})
 	</script>
 </body>
-
 </html>
