@@ -7,13 +7,13 @@
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-	<title>Generate Hearthstone Rundown Json</title>
+	<title>Generate Hearthstone Rundown Json. ver: 20210722</title>
 </head>
 
 <body>
 	<div class="container">
 		<div>
-			<h3 class="">Generate Hearthstone Rundown Json</h3>
+			<h3 class="">Generate Hearthstone Rundown Json. ver: 20210722</h3>
 			<div class="">click: [{"type": "click", "x": 123, "y": 321}]</div>
 			<div class="">drag: [{"type": "drag", "xFrom": 123, "yFrom": 321, "xTo": 123, "yTo": 321}]</div>
 			<div class="">multiple drag: [{"type": "MF2MTX", "xFrom": 123, "yFrom": 321, "fromInterval": 2, "fromDistance": 5, "xTo": 123, "yTo": 321, "toInterval": 2, "toDistance": 10}]</div>
@@ -71,7 +71,7 @@
 						"X": xFrom,
 						"Y": yFrom,
 					});
-					this.timestamp += 100;
+					this.timestamp += 80;
 
 					this.jsonRundown.push({
 						"Delta": 0,
@@ -80,7 +80,7 @@
 						"X": xTo,
 						"Y": yTo,
 					});
-					this.timestamp += 250;
+					this.timestamp += 180;
 
 					this.jsonRundown.push({
 						"Delta": 0,
@@ -89,7 +89,7 @@
 						"X": xTo,
 						"Y": yTo,
 					});
-					this.timestamp += 300;
+					this.timestamp += 280;
 				},
 				multipleDragToMultipleTargetByX: function (e) {
 					// TODO: control full direction
